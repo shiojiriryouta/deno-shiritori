@@ -2,37 +2,47 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-  <h1>見出しですこれは</h1>
-  <p id="previousWord"></p>
-  <input id="nextWordInput" type="text" />
-  <button id="nextWordSendButton">送信</button>
-  <script type="module">
-
-    window.onload = async (event) => {
-      const response = await fetch("/shiritori");
-      const previousWord = await response.text();
-      const para = document.querySelector("#previousWord");
-      para.innerText = `前の単語：${previousWord}`;
-    };
-    document.querySelector("#nextWordSendButton").onclick = async (event) => {
-      const nextWord = document.querySelector("#nextWordInput").value;
-      const response = await fetch("/shiritori", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nextWord })
-      });
-      if (response.status / 100 !== 2) {
-        alert(await response.text());
-        return;
-      }
-      const previousWord = await response.text();
-      const para = document.querySelector("#previousWord");
-      para.innerText = `前の単語：${previousWord}`;
-    };
-
-  </script>
+  <form class="w-10/12 mx-auto md:max-w-md">
+    <h1 class="text-5xl font-bold ">しりとりアプリ</h1>
+    
+    <!-- 入力フォームを表示 -->
+    <input id="nextWordInput" type="text" class="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline " id="username" type="text" placeholder="Username"/>
+    <!-- 送信ボタンをつけた -->
+    <button id="nextWordSendButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">送信</button>
+    <p id="previousWord"></p>
+    <script type="module">
+      // setTimeout(function () {
+      //     location.reload();
+      // }, 2000);
+      window.onload = async (event) => {
+        const response = await fetch("/shiritori");
+        const previousWord = await response.text();
+        //documentオブジェクトは
+        const para = document.querySelector("#previousWord");
+        para.innerText = `${previousWord}\n`;
+      };
+      document.querySelector("#nextWordSendButton").onclick = async (event) => {
+        const nextWord = document.querySelector("#nextWordInput").value;
+        const response = await fetch("/shiritori", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          //POSTでサーバに送信している。このbodyの中身をサーバで受け取った単語として扱っている。
+          body: JSON.stringify({ nextWord })
+        });
+        if (response.status / 100 !== 2) {
+          alert(await response.text());
+          return;
+        }
+        const previousWord = await response.text();
+        const para = document.querySelector("#previousWord");
+        para.innerText = `${previousWord}`;
+      };
+    </script>
+  </form>
 </body>
 </html>
