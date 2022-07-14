@@ -1,11 +1,9 @@
 import { serve } from "https://deno.land/std@0.138.0/http/server.ts"
 import { serveDir } from "https://deno.land/std@0.138.0/http/file_server.ts";
-function check(str){
-  if (str.match(/^[ぁ-んー　]*$/)) {      
-    return false;
-  } else {
-    return true;
-  }
+function doReload() {
+ 
+  // reloadメソッドによりページをリロード
+  window.location.reload();
 }
 let previousWord = "しりとり";
 //過去に出てきた文字列を保存
@@ -19,29 +17,28 @@ serve(async (req) => {
   console.log(pathname);
   if (req.method === "GET" && pathname === "/shiritori") {
     //画面に文字を表示してる
-    return new Response(`これは上\n前の単語:${previousWord}\n[単語の履歴]\n${wordlog.join("\n")}`);
+    return new Response(`前の単語:  ${previousWord}\n[単語の履歴]\n${wordlog.join("\n")}`);
   }
   if (req.method === "POST" && pathname === "/shiritori") {
     const requestJson = await req.json();
     const nextWord = requestJson.nextWord;
-    
     ////各種条件を判定する領域
     //送信した文字がひらがなか判定
-    let regexp = /^[\u{3000}-\u{301C}\u{3041}-\u{3093}\u{309B}-\u{309E}]+$/mu;
+    let regexp = /^[\u{3000}-\u{301C}\u{3041}-\u{3093}\u{309B}-\u{309E}\u{30FC}]+$/mu;
     if(!(regexp).test(String(nextWord))){
       return new Response("単語がひらがなではありません。", { status: 400 });
     }
-
     //送信した文字の語尾が前の文字の頭文字とつながっているか
     //charAtで文字列の特定の文字だけ切り抜いてる
     if (nextWord.length == 0 || previousWord.charAt(previousWord.length - 1) !== nextWord.charAt(0)) {
       //画面に文字を表示している
       return new Response("前の単語に続いていません。", { status: 400 });
     }
-
     //送信した文字が「ん」で終わっていないか
     if(nextWord.charAt(nextWord.length - 1) == 'ん'){
-      wordlog
+      wordlog = [];
+      num = Math.floor(Math.random() * randomword.length);
+      previousWord = randomword[num];
       return new Response("単語の語尾が「ん」なので終了しました。", { status: 400 });
     }
 
@@ -53,9 +50,21 @@ serve(async (req) => {
     }
     wordlog[wordlog.length] = previousWord;
     previousWord = nextWord;
+    window.addEventListener('load', function () {
+ 
+      // ページ表示完了した5秒後にリロード
+      setTimeout(doReload, 5000);
+    });
     return new Response(`これは下\n前の単語:${previousWord}\n[単語の履歴]\n${wordlog}`);
   }
 
+  //リセットボタンを押したとき
+  if(req.method === "POST" && pathname === "/reset"){
+    wordlog = [];
+    num = Math.floor(Math.random() * randomword.length);
+    previousWord = randomword[num];
+    return new Response("しりとりをリセットしました");
+  }
   //Denoの標準ライブラリを使ってpublic フォルダの任意のファイルが
   //拡張子に合わせて適切な Content-Type ヘッダがセットされて返ってくる
   return serveDir(req, {

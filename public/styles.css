@@ -8,5 +8,7 @@ body {
 
 h1 {
     padding: 20px;
+    background-color: rgb(1, 57, 104);
+    color : white;
 }
 

@@ -5,7 +5,9 @@ console.log("Listening on http://localhost:8000");
 serve(req => {
 
     let a = ["a",'A','S'];
+    let b = a;
     console.log(a)
-    return new Response(a.join("\n"));
+    a = [];
+    return new Response(`a:${a} , b:${b}`);
 
 });
