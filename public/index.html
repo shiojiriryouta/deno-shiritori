@@ -11,15 +11,12 @@
     <h1 class="text-5xl font-bold ">しりとりアプリ</h1>
     
     <!-- 入力フォームを表示 -->
-    <input id="nextWordInput" type="text" class="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline " id="username" type="text" placeholder="Username"/>
+    <input id="nextWordInput" type="text" class="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline " id="username" type="text" placeholder="ひらがなで入力"/>
     <!-- 送信ボタンをつけた -->
     <button id="nextWordSendButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">送信</button>
     <button id="resetbutton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">リセット</button>
     <p id="previousWord"></p>
     <script type="module">
-      // setTimeout(function () {
-      //     location.reload();
-      // }, 2000);
       window.onload = async (event) => {
         const response = await fetch("/shiritori");
         const previousWord = await response.text();

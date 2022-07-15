@@ -8,6 +8,7 @@ function doReload() {
 let previousWord = "しりとり";
 //過去に出てきた文字列を保存
 let wordlog = [];
+let logcheck = [];
 let randomword = ["あたま","つまさき","しょうげき","いなずま","おれたち","みみ","ゆさぶり","おと","いたずら","みのり","かじつ","やばい","ぼると","じだい","いま","びーと"];
 let num = Math.floor(Math.random() * randomword.length) ;
 previousWord = randomword[num];
@@ -50,12 +51,7 @@ serve(async (req) => {
     }
     wordlog[wordlog.length] = previousWord;
     previousWord = nextWord;
-    window.addEventListener('load', function () {
- 
-      // ページ表示完了した5秒後にリロード
-      setTimeout(doReload, 5000);
-    });
-    return new Response(`これは下\n前の単語:${previousWord}\n[単語の履歴]\n${wordlog}`);
+    return new Response(`\n前の単語:${previousWord}\n[単語の履歴]\n${wordlog}`);
   }
 
   //リセットボタンを押したとき
@@ -63,6 +59,12 @@ serve(async (req) => {
     wordlog = [];
     num = Math.floor(Math.random() * randomword.length);
     previousWord = randomword[num];
+    return new Response("しりとりをリセットしました");
+  }
+
+  if(logcheck === wordlog){
+    logcheck = wordlog;
+    location.reload();
     return new Response("しりとりをリセットしました");
   }
   //Denoの標準ライブラリを使ってpublic フォルダの任意のファイルが
